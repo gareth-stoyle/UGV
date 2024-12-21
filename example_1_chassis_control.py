@@ -24,13 +24,13 @@ else:
 # T is command type
 
 # The wheel rotates at a speed of 0.2 meters per second and stops after 2 seconds.
-# base.send_command({"T":1,"L":0.2,"R":0.2})
-# time.sleep(2)
-# base.send_command({"T":1,"L":0,"R":0})
-# time.sleep(2)
-# base.send_command({"T":1,"L":-0.2,"R":-0.2})
-# time.sleep(2)
-# base.send_command({"T":1,"L":0,"R":0})
+base.send_command({"T":1,"L":0.2,"R":0.2})
+time.sleep(2)
+base.send_command({"T":1,"L":0,"R":0})
+time.sleep(2)
+base.send_command({"T":1,"L":-0.2,"R":-0.2})
+time.sleep(2)
+base.send_command({"T":1,"L":0,"R":0})
 
 # The X value is the moving linear velocity in m/s and the Z value is the steering angular velocity in rad/s.
 # base.send_command({"T":13,"X":0.1,"Z":0.3})

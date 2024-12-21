@@ -1,4 +1,5 @@
 ugv-env/
+.vscode/
 __pycache__/
 tutorial_cn/__pycache__/
 tutorial_en/.ipynb_checkpoints/
