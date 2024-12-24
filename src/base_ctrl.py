@@ -10,7 +10,9 @@ import numpy as np
 
 curpath = os.path.realpath(__file__)
 thisPath = os.path.dirname(curpath)
-with open(thisPath + '/config.yaml', 'r') as yaml_file:
+config_path = os.path.join(thisPath, '..', 'config', 'config.yaml')
+
+with open(config_path, 'r') as yaml_file:
     f = yaml.safe_load(yaml_file)
 
 class ReadLine:

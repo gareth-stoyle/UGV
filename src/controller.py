@@ -1,6 +1,4 @@
 from pyPS4Controller.controller import Controller
-from base_ctrl import BaseController
-import time
 
 controller_config = {
     "R2_max_val": 32767,
@@ -15,22 +13,14 @@ ugv_config = {
     "speed_min_val": 0
 }
 
-# # The wheel rotates at a speed of 0.2 meters per second and stops after 2 seconds.
-# base.send_command({"T":1,"L":0.2,"R":0.2})
-# time.sleep(1)
-# base.send_command({"T":1,"L":0,"R":0})
-# time.sleep(2)
-# base.send_command({"T":1,"L":-0.2,"R":-0.2})
-# time.sleep(2)
-# base.send_command({"T":1,"L":0,"R":0})
+class UGVRemoteController(Controller):
+    """Converts PS4 Controller events to actionable commands for UGV system"""
 
-
-class UGVController(Controller):
-    def __init__(self, base, controller_config, ugv_config, **kwargs):
+    def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
-        self.base = base
-        self.controller_config = controller_config
-        self.ugv_config = ugv_config
+        self.config = config
+        self.debug = False # debug event stream
+        self.black_listed_buttons = [0, 1, 4, 3]
 
     def control_normalise(self, val, from_range, to_range):
         """
@@ -57,24 +47,31 @@ class UGVController(Controller):
 
     def on_R2_press(self, val):
         speed = self.control_normalise(val, 
-                                       [controller_config["R2_min_val"], controller_config["R2_max_val"]], 
-                                       [ugv_config["speed_min_val"], ugv_config["speed_max_val"]])
+                                       [self.config.controller_config["R2_min_val"], self.config.controller_config["R2_max_val"]], 
+                                       [self.config.ugv_config["speed_min_val"], self.config.ugv_config["speed_max_val"]])
         print(f"val: {val}, speed: {speed}")
-        self.base.send_command({"T":1,"L":speed,"R":speed})
+        # need to run the below from UGVSystem drive method
+        # # this needs to set system speed of a larger UGVSystem, which is continuously sending the ugv commands
+        # self.base.send_command({"T":1,"L":speed,"R":speed})
 
     def on_R2_release(self):
-        self.base.send_command({"T":1,"L":0,"R":0})
+        pass
+        # need to run the below from UGVSystem drive method
+        # self.base.send_command({"T":1,"L":0,"R":0})
 
     def on_L2_press(self, val):
         speed = self.control_normalise(val, 
-                                       [controller_config["L2_min_val"], controller_config["L2_max_val"]], 
-                                       [ugv_config["speed_min_val"], ugv_config["speed_max_val"]])
+                                       [self.config.controller_config["L2_min_val"], self.config.controller_config["L2_max_val"]], 
+                                       [self.config.ugv_config["speed_min_val"], self.config.ugv_config["speed_max_val"]])
         speed = -speed # for reverse
         print(f"val: {val}, speed: {speed}")
-        self.base.send_command({"T":1,"L":speed,"R":speed})
+        # need to run the below from UGVSystem drive method
+        # self.base.send_command({"T":1,"L":speed,"R":speed})
 
     def on_L2_release(self):
-        self.base.send_command({"T":1,"L":0,"R":0})
+        pass
+        # need to run the below from UGVSystem drive method
+        # self.base.send_command({"T":1,"L":0,"R":0})
 
     def _ignore_event(self, *args, **kwargs):
         pass
@@ -122,30 +119,4 @@ class UGVController(Controller):
     on_playstation_button_release = _ignore_event
 
 if __name__ == "__main__":
-    # Function for Detecting Raspberry Pi
-    def is_raspberry_pi5():
-        with open('/proc/cpuinfo', 'r') as file:
-            for line in file:
-                if 'Model' in line:
-                    if 'Raspberry Pi 5' in line:
-                        return True
-                    else:
-                        return False
-
-    # Determine the GPIO Serial Device Name Based on the Raspberry Pi Model
-    if is_raspberry_pi5():
-        base = BaseController('/dev/ttyAMA0', 115200)
-    else:
-        base = BaseController('/dev/serial0', 115200)
-
-    # connect to parent Controller class for understanding default behaviour
-    # controller = Controller(interface="/dev/input/js0", connecting_using_ds4drv=False)
-
-    controller = UGVController(interface="/dev/input/js0", 
-                               connecting_using_ds4drv=False, 
-                               base=base, 
-                               controller_config=controller_config, 
-                               ugv_config=ugv_config)
-    
-    # you can start listening before controller is paired, as long as you pair it within the timeout window
-    controller.listen(timeout=60)
+    pass

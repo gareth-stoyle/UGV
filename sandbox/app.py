@@ -43,7 +43,7 @@ import asyncio
 import time
 import logging
 import logging
-import cv_ctrl
+import sandbox.cv_ctrl as cv_ctrl
 import audio_ctrl
 import os_info
 
