@@ -1,26 +1,48 @@
 from pyPS4Controller.controller import Controller
 
-controller_config = {
-    "R2_max_val": 32767,
-    "R2_min_val": -32767,
-    "L2_max_val": 32767,
-    "L2_min_val": -32767
-}
-
-ugv_config = {
-    # reverse or forward speed
-    "speed_max_val": 1,
-    "speed_min_val": 0
-}
-
 class UGVRemoteController(Controller):
     """Converts PS4 Controller events to actionable commands for UGV system"""
 
     def __init__(self, config, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(interface=config['controller_config']['ps4_interface'],
+                         connecting_using_ds4drv=False,
+                         **kwargs)
         self.config = config
         self.debug = False # debug event stream
         self.black_listed_buttons = [0, 1, 4, 3]
+        self._r_speed = 0
+        self._l_speed = 0
+        self._direction = 1
+
+    @property
+    def r_speed(self):
+        """Getter for right speed attribute."""
+        return self._r_speed
+    
+    @property
+    def l_speed(self):
+        """Getter for left speed attribute."""
+        return self._l_speed
+
+    @property
+    def direction(self):
+        """Getter for direction attribute."""
+        return self._direction
+
+    @r_speed.setter
+    def r_speed(self, val):
+        """Setter for right speed attribute."""
+        self._r_speed = val
+    
+    @l_speed.setter
+    def l_speed(self, val):
+        """Setter for left speed attribute."""
+        self._l_speed = val
+
+    @direction.setter
+    def direction(self, val):
+        """Setter for direction attribute."""
+        self._direction = val
 
     def control_normalise(self, val, from_range, to_range):
         """
@@ -47,31 +69,25 @@ class UGVRemoteController(Controller):
 
     def on_R2_press(self, val):
         speed = self.control_normalise(val, 
-                                       [self.config.controller_config["R2_min_val"], self.config.controller_config["R2_max_val"]], 
-                                       [self.config.ugv_config["speed_min_val"], self.config.ugv_config["speed_max_val"]])
-        print(f"val: {val}, speed: {speed}")
-        # need to run the below from UGVSystem drive method
-        # # this needs to set system speed of a larger UGVSystem, which is continuously sending the ugv commands
-        # self.base.send_command({"T":1,"L":speed,"R":speed})
+                                       [self.config['controller_config']['R2_min_val'], self.config['controller_config']['R2_max_val']], 
+                                       [self.config['ugv_config']['speed_min_val'], self.config['ugv_config']['speed_max_val']])
+        self.l_speed = speed
 
     def on_R2_release(self):
-        pass
-        # need to run the below from UGVSystem drive method
-        # self.base.send_command({"T":1,"L":0,"R":0})
+        self.l_speed = 0
 
     def on_L2_press(self, val):
         speed = self.control_normalise(val, 
-                                       [self.config.controller_config["L2_min_val"], self.config.controller_config["L2_max_val"]], 
-                                       [self.config.ugv_config["speed_min_val"], self.config.ugv_config["speed_max_val"]])
-        speed = -speed # for reverse
-        print(f"val: {val}, speed: {speed}")
-        # need to run the below from UGVSystem drive method
-        # self.base.send_command({"T":1,"L":speed,"R":speed})
+                                       [self.config['controller_config']['L2_min_val'], self.config['controller_config']['L2_max_val']], 
+                                       [self.config['ugv_config']['speed_min_val'], self.config['ugv_config']['speed_max_val']])
+        self.r_speed = speed
 
     def on_L2_release(self):
-        pass
-        # need to run the below from UGVSystem drive method
-        # self.base.send_command({"T":1,"L":0,"R":0})
+        self.r_speed = 0
+
+    def on_triangle_release(self):
+        """toggle 1 or 0 for direction (1 forwards, 0 backwards)."""
+        self.direction = self.direction ^ 1
 
     def _ignore_event(self, *args, **kwargs):
         pass
@@ -80,7 +96,6 @@ class UGVRemoteController(Controller):
     on_x_press = _ignore_event
     on_x_release = _ignore_event
     on_triangle_press = _ignore_event
-    on_triangle_release = _ignore_event
     on_circle_press = _ignore_event
     on_circle_release = _ignore_event
     on_square_press = _ignore_event
