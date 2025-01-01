@@ -50,7 +50,7 @@ class UGVRemoteController(Controller):
 
         Returns: val, the value after normalisation, 3 decimal places.
 
-        E.g control_normalise(self, 9804, [-32767, 32767], [0, 1])
+        E.g control_normalise(self, 9804, [-32767, 32767], [0, 1s])
             results in a val of 0.649
         """
         from_range_size = from_range[1] - from_range[0]
