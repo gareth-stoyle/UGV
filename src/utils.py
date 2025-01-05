@@ -1,7 +1,7 @@
 # General util functions
 
-# Function for Detecting Raspberry Pi
 def is_raspberry_pi5():
+    """Function for Detecting Raspberry Pi version."""
     with open('/proc/cpuinfo', 'r') as file:
         for line in file:
             if 'Model' in line:
