@@ -1,5 +1,5 @@
 ps4_controller_config: 
-  ps4_interface": "/dev/input/js0"
+  ps4_interface: "/dev/input/js0"
   R2_max_val: 32767
   R2_min_val: -32767
   L2_max_val: 32767
