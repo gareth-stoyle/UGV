@@ -38,34 +38,27 @@ class UGVSystem:
                 last_log = time.time()
 
             # Drive the UGV using current remote controller inputs
-            self.drive(self.controller.r_speed, 
-                       self.controller.l_speed, 
-                       self.controller.direction,
+            self.drive(self.controller.speed, 
                        log=log)
+            if log:
+                self.logger.warning(f"self.controller.turn_angle: {self.controller.turn_angle}")
 
             time.sleep(0.01)  # Sleep to reduce CPU usage
 
-    def drive(self, r_speed, l_speed, direction, log=False):
+    def drive(self, speed, log=False):
         """
         Send drive commands to the UGV.
 
         Args:
-            r_speed: Right wheel speed.
-            l_speed: Left wheel speed.
+            speed: Wheel speed.
             direction: Driving direction (0 for reverse, 1 for forward).
             log: Flag to indicate if the command should be logged.
         """
-        if direction == 0:
-            # Reverse direction by inverting speeds
-            r_speed = -r_speed
-            l_speed = -l_speed
-
         if log:
-            self.logger.debug(f"Drive Command OUT: r_speed: {r_speed}, "
-                              f"l_speed: {l_speed}, direction: {direction}")
+            self.logger.debug(f"Drive Command OUT: speed: {speed}, ")
 
         # Send the command to the base controller
-        self.base.send_command({"T": 1, "R": r_speed, "L": l_speed})
+        self.base.send_command({"T": 1, "R": speed, "L": speed})
 
     def run(self):
         """
@@ -85,8 +78,7 @@ class UGVSystem:
         # Stop the UGV when remote control ends
         self.logger.debug("Remote control thread ended, ensuring UGV stopped")
         self.drive(0, 0, 1)
-        self.controller.r_speed = 0
-        self.controller.l_speed = 0
+        self.controller.speed = 0
 
         system_loop_thread.join()
 
