@@ -1,3 +1,4 @@
+import keyboard
 from threading import Thread
 import time
 
@@ -77,7 +78,7 @@ class UGVSystem:
         """
         log_freq = 0.5  # Frequency of logging in seconds
         last_log = time.time()
-        while True:
+        while not self.controller.stop:
             # Determine if it's time to log
             log = False
             if (time.time() - last_log) > log_freq:
@@ -90,6 +91,8 @@ class UGVSystem:
                        log=log)
 
             time.sleep(0.01)  # Sleep to reduce CPU usage
+        if self.controller.stop:
+            self.logger.info("Stop command received, exiting!")
 
     def run(self):
         """
@@ -106,7 +109,7 @@ class UGVSystem:
 
         remote_control_thread.join()
 
-        # Stop the UGV when remote control ends
+        # Stop the UGV system if remote control ends abruptly (battery/connection)
         self.logger.debug("Remote control thread ended, ensuring UGV stopped")
         self._drive(0, 0, 1)
         self.controller.speed = 0

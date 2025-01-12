@@ -152,6 +152,9 @@ class UGVRemoteController(Controller):
         )
         self.turn = turn
 
+    def on_options_release(self):
+        self.stop = True
+
     def _ignore_event(self, *args, **kwargs):
         """
         Placeholder method to ignore events for unneeded buttons.
@@ -196,7 +199,6 @@ class UGVRemoteController(Controller):
     on_R3_press = _ignore_event
     on_R3_release = _ignore_event
     on_options_press = _ignore_event
-    on_options_release = _ignore_event
     on_share_press = _ignore_event
     on_share_release = _ignore_event
     on_playstation_button_press = _ignore_event

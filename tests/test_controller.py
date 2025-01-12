@@ -1,4 +1,3 @@
-import pytest
 from src.controller import UGVRemoteController
 from src.utils import normalise_to_range
 
