@@ -15,7 +15,12 @@ def is_raspberry_pi5():
                     return False
 
 def normalise_to_range(value, old_min, old_max, new_min, new_max):
-    """Normalise a value from one range to another"""
+    """Normalise a value from one range to another."""
+    if old_max == old_min:
+        raise ValueError("Old range cannot be zero (old_min == old_max).")
+    if new_max == new_min:
+        raise ValueError("New range cannot be zero (new_min == new_max).")
+    
     return new_min + ((value - old_min) * (new_max - new_min)) / (old_max - old_min)
 
 def run_tests():

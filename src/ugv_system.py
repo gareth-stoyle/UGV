@@ -1,4 +1,3 @@
-import keyboard
 from threading import Thread
 import time
 
@@ -71,6 +70,10 @@ class UGVSystem:
 
         return l_speed, r_speed
 
+    def _terminate(self):
+        """Kill system by killing controller"""
+        self.controller.stop = True
+
     def _loop(self):
         """
         Main system loop to send commands to the UGV based on remote controller input.
@@ -93,6 +96,8 @@ class UGVSystem:
             time.sleep(0.01)  # Sleep to reduce CPU usage
         if self.controller.stop:
             self.logger.info("Stop command received, exiting!")
+            self._drive(0, 0, 1)
+            self.controller.speed = 0
 
     def run(self):
         """
