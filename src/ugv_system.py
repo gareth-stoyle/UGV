@@ -20,10 +20,10 @@ class UGVSystem:
         self.base_path = base_path
         self.controller = UGVRemoteController(config=config)
         self.base = BaseController(base_path, 115200)
-        self.logger = customLogger("ugv_system")
+        self.logger = customLogger("ugv_system", "log/app.log")
         self.logger.debug("Initialised UGVRemoteController and BaseController")
 
-    def drive(self, speed, turn, log=False):
+    def _drive(self, speed, turn, log=False):
         """
         Send drive commands to the UGV.
 
@@ -31,13 +31,12 @@ class UGVSystem:
             speed: Overall speed, ranges from -0.5 (reverse) to +0.5 (forward).
             turn: Turning value, ranges from -1 (sharp left) to +1 (sharp right).
             log: Flag to indicate if the command should be logged.
-
         """
         if log:
             self.logger.debug(f"Drive Command OUT 1: speed: {speed}, "
                               f"turn: {turn}")
 
-        r_speed, l_speed = self.calculate_track_speeds(speed, turn)
+        r_speed, l_speed = self._calculate_track_speeds(speed, turn)
 
         # Send the command to the base controller
         self.base.send_command({"T": 1, "R": r_speed, "L": l_speed})
@@ -46,7 +45,8 @@ class UGVSystem:
             self.logger.debug(f"Drive Command OUT 2: r_speed: {r_speed}, "
                               f"l_speed: {l_speed}")
 
-    def calculate_track_speeds(self, speed, turn):
+    @staticmethod
+    def _calculate_track_speeds(speed, turn):
         """
         Calculate left and right track speeds for a tracked vehicle.
         Adjustment is required when the moving vehicle is turning.
@@ -70,7 +70,7 @@ class UGVSystem:
 
         return l_speed, r_speed
 
-    def loop(self):
+    def _loop(self):
         """
         Main system loop to send commands to the UGV based on remote controller input.
         Logs output at a reduced frequency.
@@ -85,7 +85,7 @@ class UGVSystem:
                 last_log = time.time()
 
             # Drive the UGV using current remote controller inputs
-            self.drive(self.controller.speed,
+            self._drive(self.controller.speed,
                        self.controller.turn,
                        log=log)
 
@@ -99,7 +99,7 @@ class UGVSystem:
         # Thread to handle remote control listening
         remote_control_thread = Thread(target=self.controller.listen, args=(60,))
         # Thread to handle the system's main loop
-        system_loop_thread = Thread(target=self.loop)
+        system_loop_thread = Thread(target=self._loop)
 
         remote_control_thread.start()
         system_loop_thread.start()
@@ -108,7 +108,7 @@ class UGVSystem:
 
         # Stop the UGV when remote control ends
         self.logger.debug("Remote control thread ended, ensuring UGV stopped")
-        self.drive(0, 0, 1)
+        self._drive(0, 0, 1)
         self.controller.speed = 0
 
         system_loop_thread.join()

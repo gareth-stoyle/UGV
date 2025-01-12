@@ -1,7 +1,7 @@
 import logging
 
 class customLogger:
-    def __new__(cls, name):
+    def __new__(cls, name, log_file):
         """
         Create a custom logger with both console and file handlers.
 
@@ -17,7 +17,7 @@ class customLogger:
         # Create a console handler to output logs to the console
         console_handler = logging.StreamHandler()
         # Create a file handler to save logs to a file
-        file_handler = logging.FileHandler("log/app.log", mode="w", encoding="utf-8")
+        file_handler = logging.FileHandler(log_file, mode="a", encoding="utf-8")
 
         logger.addHandler(console_handler)
         logger.addHandler(file_handler)

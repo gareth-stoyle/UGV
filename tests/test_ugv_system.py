@@ -27,11 +27,11 @@ system.logger = mock_logger
 # 2. Test `drive` Method
 def test_drive():
     # Test forward drive
-    system.drive(0.5, 0.5, 1, log=True)
+    system._drive(0.5, 0, log=True)
     system.base.send_command.assert_called_with({"T": 1, "R": 0.5, "L": 0.5})
 
     # Test reverse drive
-    system.drive(-0.5, -0.5, 1, log=True)
+    system._drive(-0.5, 0, log=True)
     system.base.send_command.assert_called_with({"T": 1, "R": -0.5, "L": -0.5})
 
 
