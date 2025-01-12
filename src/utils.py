@@ -9,3 +9,7 @@ def is_raspberry_pi5():
                     return True
                 else:
                     return False
+
+def normalise_to_range(value, old_min, old_max, new_min, new_max):
+    """Normalise a value from one range to another"""
+    return new_min + ((value - old_min) * (new_max - new_min)) / (old_max - old_min)

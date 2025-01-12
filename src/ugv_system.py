@@ -23,6 +23,53 @@ class UGVSystem:
         self.logger = customLogger("ugv_system")
         self.logger.debug("Initialised UGVRemoteController and BaseController")
 
+    def drive(self, speed, turn, log=False):
+        """
+        Send drive commands to the UGV.
+
+        Args:
+            speed: Overall speed, ranges from -0.5 (reverse) to +0.5 (forward).
+            turn: Turning value, ranges from -1 (sharp left) to +1 (sharp right).
+            log: Flag to indicate if the command should be logged.
+
+        """
+        if log:
+            self.logger.debug(f"Drive Command OUT 1: speed: {speed}, "
+                              f"turn: {turn}")
+
+        r_speed, l_speed = self.calculate_track_speeds(speed, turn)
+
+        # Send the command to the base controller
+        self.base.send_command({"T": 1, "R": r_speed, "L": l_speed})
+
+        if log:
+            self.logger.debug(f"Drive Command OUT 2: r_speed: {r_speed}, "
+                              f"l_speed: {l_speed}")
+
+    def calculate_track_speeds(self, speed, turn):
+        """
+        Calculate left and right track speeds for a tracked vehicle.
+        Adjustment is required when the moving vehicle is turning.
+
+        Args:
+            speed: Overall speed, ranges from -0.5 (reverse) to +0.5 (forward).
+            turn: Turning value, ranges from -1 (sharp left) to +1 (sharp right).
+        """
+        # no adjustment needed when stationary or driving straight.
+        if speed == 0 or turn == 0:
+            return speed, speed
+
+        # Turning right, reduce left track speed.
+        if turn > 0:
+            l_speed = speed * (1 - turn)
+            r_speed = speed
+        # Turning left, reduce right track speed.
+        elif turn < 0:
+            l_speed = speed
+            r_speed = speed * (1 + turn)
+
+        return l_speed, r_speed
+
     def loop(self):
         """
         Main system loop to send commands to the UGV based on remote controller input.
@@ -38,27 +85,11 @@ class UGVSystem:
                 last_log = time.time()
 
             # Drive the UGV using current remote controller inputs
-            self.drive(self.controller.speed, 
+            self.drive(self.controller.speed,
+                       self.controller.turn,
                        log=log)
-            if log:
-                self.logger.warning(f"self.controller.turn_angle: {self.controller.turn_angle}")
 
             time.sleep(0.01)  # Sleep to reduce CPU usage
-
-    def drive(self, speed, log=False):
-        """
-        Send drive commands to the UGV.
-
-        Args:
-            speed: Wheel speed.
-            direction: Driving direction (0 for reverse, 1 for forward).
-            log: Flag to indicate if the command should be logged.
-        """
-        if log:
-            self.logger.debug(f"Drive Command OUT: speed: {speed}, ")
-
-        # Send the command to the base controller
-        self.base.send_command({"T": 1, "R": speed, "L": speed})
 
     def run(self):
         """

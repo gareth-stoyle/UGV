@@ -4,14 +4,14 @@ ps4_controller_config:
   R2_MIN: -32767
   L2_MAX: 32767
   L2_MIN: -32767
-  L3_LEFT_MAX: -32767
-  L3_LEFT_MIN: -259
+  L3_LEFT_MAX: -259
+  L3_LEFT_MIN: -32767
   L3_RIGHT_MAX: 32767
   L3_RIGHT_MIN: 258
 ugv_config:
   # reverse and forward speed
   SPEED_MAX: 0.5
   SPEED_MIN: 0
-  TURN_ANGLE_MAX: 1
-  TURN_ANGLE_MID: 0
-  TURN_ANGLE_MIN: -1
+  TURN_VALUE_MAX: 1
+  TURN_VALUE_MID: 0
+  TURN_VALUE_MIN: -1
