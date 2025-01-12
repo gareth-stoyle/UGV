@@ -13,12 +13,12 @@ base_path = '/dev/ttyAMA0' if is_raspberry_pi5() else '/dev/serial0'
 
 # 1. Test Initialization
 def test_initialization():
-    init_test_system = UGVSystem(config=config, base_path=base_path)
+    init_test_system = UGVSystem(config=config, base_path=base_path, debug_logging=False)
     assert isinstance(init_test_system.controller, UGVRemoteController)
     assert isinstance(init_test_system.base, BaseController)
 
 # Setup global system and replace basecontroller and logger with mocks
-system = UGVSystem(config=config, base_path=base_path)
+system = UGVSystem(config=config, base_path=base_path, debug_logging=False)
 mock_base = MagicMock()
 mock_logger = MagicMock()
 system.base = mock_base

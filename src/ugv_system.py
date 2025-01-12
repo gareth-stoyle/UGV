@@ -9,7 +9,7 @@ from src.logger import customLogger
 class UGVSystem:
     """High Level Controller for the system (remote control + UGV)"""
 
-    def __init__(self, config, base_path):
+    def __init__(self, config, base_path, debug_logging):
         """
         Initialize the UGVSystem with configuration and base path.
 
@@ -21,7 +21,7 @@ class UGVSystem:
         self.base_path = base_path
         self.controller = UGVRemoteController(config=config)
         self.base = BaseController(base_path, 115200)
-        self.logger = customLogger("ugv_system", "log/app.log")
+        self.logger = customLogger("ugv_system", "log/app.log", debug_logging)
         self.logger.debug("Initialised UGVRemoteController and BaseController")
 
     def _drive(self, speed, turn, log=False):

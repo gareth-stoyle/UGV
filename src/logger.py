@@ -3,7 +3,7 @@ import random
 from termcolor import colored
 
 class customLogger:    
-    def __new__(cls, name, log_file):
+    def __new__(cls, name, log_file, debug):
         """
         Create a custom logger with both console and file handlers.
 
@@ -33,7 +33,7 @@ class customLogger:
 
         # Pick a random color from the COLOURS list for console output
         colour = random.choice([
-        'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'
+        'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'
         ])
 
         # Create a custom formatter with color
@@ -52,7 +52,7 @@ class customLogger:
         console_handler.setFormatter(colored_formatter)
         # Configure handlers
         console_handler.setFormatter(colored_formatter)
-        console_handler.setLevel("INFO")
+        console_handler.setLevel("DEBUG" if debug else "INFO")
         file_handler.setFormatter(colored_formatter)
         file_handler.setLevel("DEBUG")
 

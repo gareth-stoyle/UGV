@@ -23,20 +23,16 @@ base_path = '/dev/ttyAMA0' if is_raspberry_pi5() else '/dev/serial0'
 
 parser = argparse.ArgumentParser(description="UGV System")
 parser.add_argument(
-    "--overwrite-log", 
+    "--debug", 
     action="store_true", 
-    help="Delete the existing log file at the start of the program."
+    help="output debug to CLI."
 )
 args = parser.parse_args()
 
 
 ### Setup logging ###
-
-# Handle --overwrite-log arg
-if args.overwrite_log:
-    delete_file(log_file)
-
-logger = customLogger("main", log_file)
+delete_file(log_file)
+logger = customLogger("main", log_file, args.debug)
 
 
 ### Run tests ###
@@ -52,7 +48,7 @@ logger.info("Testing passed, running UGV system!")
 
 ### Run system ###
 print_ugv_system_banner(logger)
-system = UGVSystem(config=config, base_path=base_path)
+system = UGVSystem(config=config, base_path=base_path, debug_logging=args.debug)
 system.run()
 
 
