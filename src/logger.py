@@ -2,7 +2,8 @@ import logging
 import random
 from termcolor import colored
 
-class customLogger:    
+
+class customLogger:
     def __new__(cls, name, log_file, debug):
         """
         Create a custom logger with both console and file handlers.
@@ -26,15 +27,13 @@ class customLogger:
 
         # Log format for both handlers
         formatter = logging.Formatter(
-            "{asctime} - {name} - {levelname} - {message}", 
-            style="{", 
-            datefmt="%Y-%m-%d %H:%M:%S"
+            "{asctime} - {name} - {levelname} - {message}",
+            style="{",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
 
         # Pick a random color from the COLOURS list for console output
-        colour = random.choice([
-        'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'
-        ])
+        colour = random.choice(["red", "green", "yellow", "blue", "magenta", "cyan"])
 
         # Create a custom formatter with color
         class ColouredFormatter(logging.Formatter):
@@ -45,9 +44,9 @@ class customLogger:
 
         # Configure console handler formatter with color
         colored_formatter = ColouredFormatter(
-            "{asctime} - {name} - {levelname} - {message}", 
-            style="{", 
-            datefmt="%Y-%m-%d %H:%M:%S"
+            "{asctime} - {name} - {levelname} - {message}",
+            style="{",
+            datefmt="%Y-%m-%d %H:%M:%S",
         )
         console_handler.setFormatter(colored_formatter)
         # Configure handlers
@@ -57,4 +56,3 @@ class customLogger:
         file_handler.setLevel("DEBUG")
 
         return logger
-

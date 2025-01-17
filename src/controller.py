@@ -2,6 +2,7 @@ from pyPS4Controller.controller import Controller
 
 from src.utils import normalise_to_range
 
+
 class UGVRemoteController(Controller):
     """
     Converts PS4 Controller events to actionable commands for the UGV system.
@@ -18,9 +19,11 @@ class UGVRemoteController(Controller):
             config: Configuration dictionary with PS4 controller and UGV parameters.
             **kwargs: Additional keyword arguments passed to the parent class.
         """
-        super().__init__(interface=config['ps4_controller_config']['PS4_INTERFACE'],
-                         connecting_using_ds4drv=False,
-                         **kwargs)
+        super().__init__(
+            interface=config["ps4_controller_config"]["PS4_INTERFACE"],
+            connecting_using_ds4drv=False,
+            **kwargs
+        )
         self.config = config
         self.debug = False  # debug event stream
         # L3 & R3 spit out annoying output
@@ -50,7 +53,7 @@ class UGVRemoteController(Controller):
             int: turning value (0: straight, -1: full left, 1: full right).
         """
         return self._turn
-    
+
     @speed.setter
     def speed(self, val):
         """
@@ -80,10 +83,10 @@ class UGVRemoteController(Controller):
         """
         speed = normalise_to_range(
             val,
-            self.config['ps4_controller_config']['R2_MIN'],
-            self.config['ps4_controller_config']['R2_MAX'],
-            self.config['ugv_config']['SPEED_MIN'],
-            self.config['ugv_config']['SPEED_MAX']
+            self.config["ps4_controller_config"]["R2_MIN"],
+            self.config["ps4_controller_config"]["R2_MAX"],
+            self.config["ugv_config"]["SPEED_MIN"],
+            self.config["ugv_config"]["SPEED_MAX"],
         )
         self.speed = speed
 
@@ -104,12 +107,12 @@ class UGVRemoteController(Controller):
         """
         speed = normalise_to_range(
             val,
-            self.config['ps4_controller_config']['L2_MIN'],
-            self.config['ps4_controller_config']['L2_MAX'],
-            self.config['ugv_config']['SPEED_MIN'],
-            self.config['ugv_config']['SPEED_MAX']
+            self.config["ps4_controller_config"]["L2_MIN"],
+            self.config["ps4_controller_config"]["L2_MAX"],
+            self.config["ugv_config"]["SPEED_MIN"],
+            self.config["ugv_config"]["SPEED_MAX"],
         )
-        speed = -speed # reverse
+        speed = -speed  # reverse
         self.speed = speed
 
     def on_L2_release(self):
@@ -129,10 +132,10 @@ class UGVRemoteController(Controller):
         """
         turn = normalise_to_range(
             val,
-            self.config['ps4_controller_config']['L3_RIGHT_MIN'],
-            self.config['ps4_controller_config']['L3_RIGHT_MAX'],
-            self.config['ugv_config']['TURN_VALUE_MID'],
-            self.config['ugv_config']['TURN_VALUE_MAX']
+            self.config["ps4_controller_config"]["L3_RIGHT_MIN"],
+            self.config["ps4_controller_config"]["L3_RIGHT_MAX"],
+            self.config["ugv_config"]["TURN_VALUE_MID"],
+            self.config["ugv_config"]["TURN_VALUE_MAX"],
         )
         self.turn = turn
 
@@ -145,10 +148,10 @@ class UGVRemoteController(Controller):
         """
         turn = normalise_to_range(
             val,
-            self.config['ps4_controller_config']['L3_LEFT_MIN'],
-            self.config['ps4_controller_config']['L3_LEFT_MAX'],
-            self.config['ugv_config']['TURN_VALUE_MIN'],
-            self.config['ugv_config']['TURN_VALUE_MID']
+            self.config["ps4_controller_config"]["L3_LEFT_MIN"],
+            self.config["ps4_controller_config"]["L3_LEFT_MAX"],
+            self.config["ugv_config"]["TURN_VALUE_MIN"],
+            self.config["ugv_config"]["TURN_VALUE_MID"],
         )
         self.turn = turn
 
@@ -166,6 +169,7 @@ class UGVRemoteController(Controller):
         pass
 
         # Ignore all other buttons
+
     on_x_press = _ignore_event
     on_x_release = _ignore_event
     on_triangle_press = _ignore_event

@@ -5,6 +5,7 @@ from src.controller import UGVRemoteController
 from src.base_ctrl import BaseController
 from src.logger import customLogger
 
+
 class UGVSystem:
     """High Level Controller for the system (remote control + UGV)"""
 
@@ -33,8 +34,7 @@ class UGVSystem:
             log: Flag to indicate if the command should be logged.
         """
         if log:
-            self.logger.debug(f"Drive Command OUT 1: speed: {speed}, "
-                              f"turn: {turn}")
+            self.logger.debug(f"Drive Command OUT 1: speed: {speed}, " f"turn: {turn}")
 
         r_speed, l_speed = self._calculate_track_speeds(speed, turn)
 
@@ -42,8 +42,9 @@ class UGVSystem:
         self.base.send_command({"T": 1, "R": r_speed, "L": l_speed})
 
         if log:
-            self.logger.debug(f"Drive Command OUT 2: r_speed: {r_speed}, "
-                              f"l_speed: {l_speed}")
+            self.logger.debug(
+                f"Drive Command OUT 2: r_speed: {r_speed}, " f"l_speed: {l_speed}"
+            )
 
     @staticmethod
     def _calculate_track_speeds(speed, turn):
@@ -89,9 +90,7 @@ class UGVSystem:
                 last_log = time.time()
 
             # Drive the UGV using current remote controller inputs
-            self._drive(self.controller.speed,
-                       self.controller.turn,
-                       log=log)
+            self._drive(self.controller.speed, self.controller.turn, log=log)
 
             time.sleep(0.01)  # Sleep to reduce CPU usage
         if self.controller.stop:

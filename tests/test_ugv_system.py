@@ -9,12 +9,16 @@ from src.controller import UGVRemoteController
 from src.base_ctrl import BaseController
 from src.utils import is_raspberry_pi5
 
-base_path = '/dev/ttyAMA0' if is_raspberry_pi5() else '/dev/serial0'
+base_path = "/dev/ttyAMA0" if is_raspberry_pi5() else "/dev/serial0"
+
 
 def test_initialization():
-    init_test_system = UGVSystem(config=config, base_path=base_path, debug_logging=False)
+    init_test_system = UGVSystem(
+        config=config, base_path=base_path, debug_logging=False
+    )
     assert isinstance(init_test_system.controller, UGVRemoteController)
     assert isinstance(init_test_system.base, BaseController)
+
 
 # Setup global system and replace basecontroller and logger with mocks
 system = UGVSystem(config=config, base_path=base_path, debug_logging=False)
@@ -22,6 +26,7 @@ mock_base = MagicMock()
 mock_logger = MagicMock()
 system.base = mock_base
 system.logger = mock_logger
+
 
 def test_drive():
     """Test the _drive method with various inputs."""
@@ -45,21 +50,47 @@ def test_drive():
     system._drive(0, 0, log=True)
     mock_base.send_command.assert_called_with({"T": 1, "R": 0, "L": 0})
 
+
 def test_calculate_track_speeds():
     """Test the _calculate_track_speeds method."""
-    assert system._calculate_track_speeds(0.5, 0) == (0.5, 0.5), "Failed straight drive calculation."
-    assert system._calculate_track_speeds(0.5, 1) == (0.0, 0.5), "Failed right turn calculation."
-    assert system._calculate_track_speeds(0.5, -1) == (0.5, 0.0), "Failed left turn calculation."
-    assert system._calculate_track_speeds(0, 0) == (0, 0), "Failed stationary calculation."
-    assert system._calculate_track_speeds(0.5, 0.5) == (0.25, 0.5), "Failed gentle right turn calculation."
-    assert system._calculate_track_speeds(0.5, -0.5) == (0.5, 0.25), "Failed gentle left turn calculation."
-    assert system._calculate_track_speeds(1.0, -0.3) == (1.0, 0.7), "Failed left turn with higher speed calculation."
-    assert system._calculate_track_speeds(0.2, 0.8) == approx((0.04, 0.2)), "Failed sharp right turn with low speed calculation."
+    assert system._calculate_track_speeds(0.5, 0) == (
+        0.5,
+        0.5,
+    ), "Failed straight drive calculation."
+    assert system._calculate_track_speeds(0.5, 1) == (
+        0.0,
+        0.5,
+    ), "Failed right turn calculation."
+    assert system._calculate_track_speeds(0.5, -1) == (
+        0.5,
+        0.0,
+    ), "Failed left turn calculation."
+    assert system._calculate_track_speeds(0, 0) == (
+        0,
+        0,
+    ), "Failed stationary calculation."
+    assert system._calculate_track_speeds(0.5, 0.5) == (
+        0.25,
+        0.5,
+    ), "Failed gentle right turn calculation."
+    assert system._calculate_track_speeds(0.5, -0.5) == (
+        0.5,
+        0.25,
+    ), "Failed gentle left turn calculation."
+    assert system._calculate_track_speeds(1.0, -0.3) == (
+        1.0,
+        0.7,
+    ), "Failed left turn with higher speed calculation."
+    assert system._calculate_track_speeds(0.2, 0.8) == approx(
+        (0.04, 0.2)
+    ), "Failed sharp right turn with low speed calculation."
+
 
 def test_terminate():
     """Test the _terminate method."""
     system._terminate()
     assert system.controller.stop is True, "Controller stop flag not set."
+
 
 def test_loop():
     """Test the _loop method under controlled conditions."""
@@ -82,10 +113,12 @@ def test_loop():
     # Verify final commands sent
     mock_base.send_command.assert_called_with({"T": 1, "R": 0, "L": 0})
 
+
 def test_run():
     """Test the run method with mocked threads."""
-    with patch("threading.Thread.start") as mock_start, \
-         patch("threading.Thread.join") as mock_join:
+    with patch("threading.Thread.start") as mock_start, patch(
+        "threading.Thread.join"
+    ) as mock_join:
 
         system.run()
 

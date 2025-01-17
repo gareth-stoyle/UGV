@@ -5,8 +5,10 @@ import threading
 curpath = os.path.realpath(__file__)
 thisPath = os.path.dirname(curpath)
 
+
 class SystemInfo(threading.Thread):
     """docstring for SystemInfo"""
+
     def __init__(self):
         self.this_path = None
 
@@ -36,11 +38,13 @@ class SystemInfo(threading.Thread):
                 total_size += os.path.getsize(file_path)
         # Convert total_size to MB
         size_in_mb = total_size / (1024 * 1024)
-        return round(size_in_mb,2)
+        return round(size_in_mb, 2)
 
     def update_folder_size(self):
-        self.pictures_size = self.get_folder_size(self.this_path + '/templates/pictures')
-        self.videos_size = self.get_folder_size(self.this_path + '/templates/videos')
+        self.pictures_size = self.get_folder_size(
+            self.this_path + "/templates/pictures"
+        )
+        self.videos_size = self.get_folder_size(self.this_path + "/templates/videos")
 
     def update_folder(self, input_path):
         self.this_path = input_path
@@ -48,8 +52,10 @@ class SystemInfo(threading.Thread):
 
     def get_cpu_temperature(self):
         try:
-            temperature_str = os.popen('vcgencmd measure_temp').readline()
-            temperature = float(temperature_str.replace("temp=", "").replace("'C\n", ""))
+            temperature_str = os.popen("vcgencmd measure_temp").readline()
+            temperature = float(
+                temperature_str.replace("temp=", "").replace("'C\n", "")
+            )
             return temperature
         except Exception as e:
             print("Error reading CPU temperature:", str(e))
@@ -60,7 +66,7 @@ class SystemInfo(threading.Thread):
             interface_info = netifaces.ifaddresses(interface)
 
             ipv4_info = interface_info.get(netifaces.AF_INET, [{}])
-            return ipv4_info[0].get('addr')
+            return ipv4_info[0].get("addr")
         except ValueError:
             print(f"Interface {interface} not found.")
             return None
@@ -70,7 +76,9 @@ class SystemInfo(threading.Thread):
 
     def get_wifi_mode(self):
         try:
-            result = subprocess.check_output(['/sbin/iwconfig', 'wlan0'], encoding='utf-8')
+            result = subprocess.check_output(
+                ["/sbin/iwconfig", "wlan0"], encoding="utf-8"
+            )
             if "Mode:Master" in result or "Mode:AP" in result:
                 return "AP"
             if "Mode:Managed" in result:
@@ -82,13 +90,17 @@ class SystemInfo(threading.Thread):
 
     def get_signal_strength(self, interface):
         try:
-            output = subprocess.check_output(["/sbin/iwconfig", interface]).decode("utf-8")
+            output = subprocess.check_output(["/sbin/iwconfig", interface]).decode(
+                "utf-8"
+            )
             signal_strength = re.search(r"Signal level=(-\d+)", output)
             if signal_strength:
                 return int(signal_strength.group(1))
             return 0
         except FileNotFoundError:
-            print("iwconfig command not found. Please ensure it's installed and in your PATH.")
+            print(
+                "iwconfig command not found. Please ensure it's installed and in your PATH."
+            )
             return -1
         except subprocess.CalledProcessError as e:
             print(f"Error executing iwconfig: {e}")
@@ -107,13 +119,13 @@ class SystemInfo(threading.Thread):
         self.__flag.set()
 
     def run(self):
-        self.eth0_ip = self.get_ip_address('eth0')
+        self.eth0_ip = self.get_ip_address("eth0")
         self.wlan_ip = self.get_ip_address(self.net_interface)
         self.wifi_mode = self.get_wifi_mode()
         self.wifi_rssi = self.get_signal_strength(self.net_interface)
         self.cpu_temp = self.get_cpu_temperature()
         self.ram = psutil.virtual_memory().percent
-        self.cpu_load = psutil.cpu_percent(interval = self.update_interval)
+        self.cpu_load = psutil.cpu_percent(interval=self.update_interval)
         while True:
             self.cpu_temp = self.get_cpu_temperature()
             time.sleep(0.5)
@@ -125,9 +137,9 @@ class SystemInfo(threading.Thread):
             time.sleep(0.5)
             self.wlan_ip = self.get_ip_address(self.net_interface)
             time.sleep(0.5)
-            self.eth0_ip = self.get_ip_address('eth0')
+            self.eth0_ip = self.get_ip_address("eth0")
             time.sleep(0.5)
-            self.cpu_load = psutil.cpu_percent(interval = self.update_interval)
+            self.cpu_load = psutil.cpu_percent(interval=self.update_interval)
             self.__flag.wait()
 
 
@@ -137,6 +149,15 @@ if __name__ == "__main__":
     si.start()
     si.resume()
     while True:
-        print([si.pictures_size, si.videos_size, si.cpu_load, si.cpu_temp,
-            si.ram, si.wifi_rssi, si.wifi_mode])
+        print(
+            [
+                si.pictures_size,
+                si.videos_size,
+                si.cpu_load,
+                si.cpu_temp,
+                si.ram,
+                si.wifi_rssi,
+                si.wifi_mode,
+            ]
+        )
         time.sleep(1)

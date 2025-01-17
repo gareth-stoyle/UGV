@@ -2,6 +2,7 @@ import pytest
 
 from src.utils import *
 
+
 # 1. Test `normalise_to_range` Function
 def test_normalise_to_range():
     """Test normalization of values within a range."""
@@ -17,11 +18,11 @@ def test_normalise_to_range():
     # Collapsed old range
     with pytest.raises(ValueError):
         normalise_to_range(50, 50, 50, 0, 100)
-    
+
     # Collapsed new range
     with pytest.raises(ValueError):
         normalise_to_range(50, 0, 100, 10, 10)
-    
+
     # Both ranges collapsed
     with pytest.raises(ValueError):
         normalise_to_range(50, 50, 50, 10, 10)

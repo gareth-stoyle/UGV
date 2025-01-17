@@ -4,12 +4,8 @@ import sys
 from config.config import config
 from src.ugv_system import UGVSystem
 from src.logger import customLogger
-from src.utils import (
-    is_raspberry_pi5,
-    run_tests,
-    delete_file,
-    print_ugv_system_banner
-)
+from src.utils import is_raspberry_pi5, run_tests, delete_file, print_ugv_system_banner
+
 
 def tidy_up():
     logger.info("Tidy up PLACEHOLDER.")
@@ -19,14 +15,10 @@ def tidy_up():
 ### Variables ###
 log_file = "log/app.log"
 # Determine the GPIO Serial Device Name Based on the Raspberry Pi Model
-base_path = '/dev/ttyAMA0' if is_raspberry_pi5() else '/dev/serial0'
+base_path = "/dev/ttyAMA0" if is_raspberry_pi5() else "/dev/serial0"
 
 parser = argparse.ArgumentParser(description="UGV System")
-parser.add_argument(
-    "--debug", 
-    action="store_true", 
-    help="output debug to CLI."
-)
+parser.add_argument("--debug", action="store_true", help="output debug to CLI.")
 args = parser.parse_args()
 
 
