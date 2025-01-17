@@ -9,10 +9,8 @@ from src.controller import UGVRemoteController
 from src.base_ctrl import BaseController
 from src.utils import is_raspberry_pi5
 
-# Determine the GPIO Serial Device Name Based on the Raspberry Pi Model
 base_path = '/dev/ttyAMA0' if is_raspberry_pi5() else '/dev/serial0'
 
-# 1. Test Initialization
 def test_initialization():
     init_test_system = UGVSystem(config=config, base_path=base_path, debug_logging=False)
     assert isinstance(init_test_system.controller, UGVRemoteController)
@@ -25,7 +23,6 @@ mock_logger = MagicMock()
 system.base = mock_base
 system.logger = mock_logger
 
-# 2. Test `drive` Method
 def test_drive():
     """Test the _drive method with various inputs."""
     # Test forward drive
@@ -59,13 +56,11 @@ def test_calculate_track_speeds():
     assert system._calculate_track_speeds(1.0, -0.3) == (1.0, 0.7), "Failed left turn with higher speed calculation."
     assert system._calculate_track_speeds(0.2, 0.8) == approx((0.04, 0.2)), "Failed sharp right turn with low speed calculation."
 
-# 4. Test `_terminate` Method
 def test_terminate():
     """Test the _terminate method."""
     system._terminate()
     assert system.controller.stop is True, "Controller stop flag not set."
 
-# 5. Test `_loop` Method
 def test_loop():
     """Test the _loop method under controlled conditions."""
     # Simulate controller inputs
@@ -77,7 +72,6 @@ def test_loop():
     loop_thread = Thread(target=system._loop)
     loop_thread.start()
 
-    # Allow some time for the loop to run
     time.sleep(1)
 
     mock_base.send_command.assert_called_with({"T": 1, "R": 0.5, "L": 0.5})
@@ -88,7 +82,6 @@ def test_loop():
     # Verify final commands sent
     mock_base.send_command.assert_called_with({"T": 1, "R": 0, "L": 0})
 
-# 6. Test `run` Method
 def test_run():
     """Test the run method with mocked threads."""
     with patch("threading.Thread.start") as mock_start, \
@@ -96,6 +89,5 @@ def test_run():
 
         system.run()
 
-        # Ensure threads were started and joined
         assert mock_start.call_count == 2, "Not all threads started."
         assert mock_join.call_count == 2, "Not all threads joined."

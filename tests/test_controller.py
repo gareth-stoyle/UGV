@@ -24,13 +24,11 @@ sample_config = {
 
 controller = UGVRemoteController(config=sample_config)
 
-# 1. Test Initialization
 def test_initialization():
     """Test that the controller initializes correctly."""
     assert controller.speed == 0
     assert controller.turn == 0
 
-# 2. Test Property Getters and Setters
 def test_speed_property():
     """Test getter and setter for speed property."""
     assert controller.speed == 0
@@ -49,7 +47,6 @@ def test_turn_property():
     assert controller.turn == -1
     controller.turn = 0
 
-# 3. Test `on_R2_press`
 def test_on_R2_press():
     """Test handling of R2 button press."""
     controller.on_R2_press(128)
@@ -62,14 +59,12 @@ def test_on_R2_press():
     )
     assert controller.speed == expected_speed
 
-# 4. Test `on_R2_release`
 def test_on_R2_release():
     """Test handling of R2 button release."""
     controller.speed = 50
     controller.on_R2_release()
     assert controller.speed == 0
 
-# 5. Test `on_L2_press`
 def test_on_L2_press():
     """Test handling of L2 button press."""
     controller.on_L2_press(200)
@@ -82,14 +77,12 @@ def test_on_L2_press():
     )
     assert controller.speed == expected_speed
 
-# 6. Test `on_L2_release`
 def test_on_L2_release():
     """Test handling of L2 button release."""
     controller.speed = 70
     controller.on_L2_release()
     assert controller.speed == 0
 
-# 7. Test `on_L3_right`
 def test_on_L3_right():
     """Test handling of L3 joystick moved to the right."""
     controller.on_L3_right(100)
@@ -102,7 +95,6 @@ def test_on_L3_right():
     )
     assert controller.turn == expected_turn
 
-# 8. Test `on_L3_left`
 def test_on_L3_left():
     """Test handling of L3 joystick moved to the left."""
     controller.on_L3_left(-100)
@@ -115,7 +107,6 @@ def test_on_L3_left():
     )
     assert controller.turn == expected_turn
 
-# 9. Test Multiple Events
 def test_multiple_events():
     """Test combination of button presses."""
     # Simulate forward speed
