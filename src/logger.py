@@ -1,15 +1,19 @@
 import logging
 import random
 from termcolor import colored
+from typing import Type
 
 
 class customLogger:
-    def __new__(cls, name, log_file, debug):
+    def __new__(cls, name: str, log_file: str, debug: bool) -> logging.Logger:
         """
         Create a custom logger with both console and file handlers.
 
         Args:
+            cls: The class being instantiated.
             name: Name for the logger.
+            log_file: Path to the log file.
+            debug: Whether to enable debug-level logging.
 
         Returns:
             logger: Configured logger instance.
@@ -33,11 +37,11 @@ class customLogger:
         )
 
         # Pick a random color from the COLOURS list for console output
-        colour = random.choice(["red", "green", "yellow", "blue", "magenta", "cyan"])
+        colour: str = random.choice(["red", "green", "yellow", "blue", "magenta", "cyan"])
 
         # Create a custom formatter with color
         class ColouredFormatter(logging.Formatter):
-            def format(self, record):
+            def format(self, record: logging.LogRecord) -> str:
                 log_message = super().format(record)
                 colored_message = colored(log_message, colour)
                 return colored_message
@@ -49,10 +53,8 @@ class customLogger:
             datefmt="%Y-%m-%d %H:%M:%S",
         )
         console_handler.setFormatter(colored_formatter)
-        # Configure handlers
-        console_handler.setFormatter(colored_formatter)
-        console_handler.setLevel("DEBUG" if debug else "INFO")
-        file_handler.setFormatter(colored_formatter)
-        file_handler.setLevel("DEBUG")
+        console_handler.setLevel(logging.DEBUG if debug else logging.INFO)
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.DEBUG)
 
         return logger

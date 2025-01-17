@@ -1,5 +1,5 @@
+from typing import Dict, Any
 from pyPS4Controller.controller import Controller
-
 from src.utils import normalise_to_range
 
 
@@ -11,7 +11,7 @@ class UGVRemoteController(Controller):
     PS4 controller inputs and map them to UGV commands like speed and turn value.
     """
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
         """
         Initialize the UGVRemoteController.
 
@@ -24,18 +24,15 @@ class UGVRemoteController(Controller):
             connecting_using_ds4drv=False,
             **kwargs
         )
-        self.config = config
-        self.debug = False  # debug event stream
-        # L3 & R3 spit out annoying output
-        self.black_listed_buttons = [1, 4, 3]
+        self.config: Dict[str, Any] = config
+        self.debug: bool = False  # debug event stream
+        self.black_listed_buttons: list[int] = [1, 4, 3]
 
-        # Making these attrs properties may be overkill, but potentially
-        # useful later on.
-        self._speed = 0
-        self._turn = 0
+        self._speed: float = 0.0
+        self._turn: int = 0
 
     @property
-    def speed(self):
+    def speed(self) -> float:
         """
         Getter for the right speed attribute.
 
@@ -45,7 +42,7 @@ class UGVRemoteController(Controller):
         return self._speed
 
     @property
-    def turn(self):
+    def turn(self) -> int:
         """
         Getter for the turn attribute.
 
@@ -55,7 +52,7 @@ class UGVRemoteController(Controller):
         return self._turn
 
     @speed.setter
-    def speed(self, val):
+    def speed(self, val: float) -> None:
         """
         Setter for the right speed attribute.
 
@@ -65,23 +62,23 @@ class UGVRemoteController(Controller):
         self._speed = val
 
     @turn.setter
-    def turn(self, val):
+    def turn(self, val: int) -> None:
         """
         Setter for the turn attribute.
 
         Args:
-            int: new value (0: straight, -1: full left, 1: full right).
+            val: New turn value (0: straight, -1: full left, 1: full right).
         """
         self._turn = val
 
-    def on_R2_press(self, val):
+    def on_R2_press(self, val: int) -> None:
         """
         Event handler for pressing the R2 button.
 
         Args:
             val: The pressure value of the R2 button.
         """
-        speed = normalise_to_range(
+        speed: float = normalise_to_range(
             val,
             self.config["ps4_controller_config"]["R2_MIN"],
             self.config["ps4_controller_config"]["R2_MAX"],
@@ -90,7 +87,7 @@ class UGVRemoteController(Controller):
         )
         self.speed = speed
 
-    def on_R2_release(self):
+    def on_R2_release(self) -> None:
         """
         Event handler for releasing the R2 button.
 
@@ -98,14 +95,14 @@ class UGVRemoteController(Controller):
         """
         self.speed = 0
 
-    def on_L2_press(self, val):
+    def on_L2_press(self, val: int) -> None:
         """
         Event handler for pressing the L2 button.
 
         Args:
             val: The pressure value of the L2 button.
         """
-        speed = normalise_to_range(
+        speed: float = normalise_to_range(
             val,
             self.config["ps4_controller_config"]["L2_MIN"],
             self.config["ps4_controller_config"]["L2_MAX"],
@@ -115,7 +112,7 @@ class UGVRemoteController(Controller):
         speed = -speed  # reverse
         self.speed = speed
 
-    def on_L2_release(self):
+    def on_L2_release(self) -> None:
         """
         Event handler for releasing the L2 button.
 
@@ -123,14 +120,14 @@ class UGVRemoteController(Controller):
         """
         self.speed = 0
 
-    def on_L3_right(self, val):
+    def on_L3_right(self, val: int) -> None:
         """
         Event handler for pressing the L3 analogue right.
 
         Args:
             val: The pressure value of the L3 analogue.
         """
-        turn = normalise_to_range(
+        turn: int = normalise_to_range(
             val,
             self.config["ps4_controller_config"]["L3_RIGHT_MIN"],
             self.config["ps4_controller_config"]["L3_RIGHT_MAX"],
@@ -139,14 +136,14 @@ class UGVRemoteController(Controller):
         )
         self.turn = turn
 
-    def on_L3_left(self, val):
+    def on_L3_left(self, val: int) -> None:
         """
         Event handler for pressing the L3 analogue left.
 
         Args:
             val: The pressure value of the L3 analogue.
         """
-        turn = normalise_to_range(
+        turn: int = normalise_to_range(
             val,
             self.config["ps4_controller_config"]["L3_LEFT_MIN"],
             self.config["ps4_controller_config"]["L3_LEFT_MAX"],
@@ -155,10 +152,15 @@ class UGVRemoteController(Controller):
         )
         self.turn = turn
 
-    def on_options_release(self):
+    def on_options_release(self) -> None:
+        """
+        Event handler for releasing the options button.
+
+        Stops the controller.
+        """
         self.stop = True
 
-    def _ignore_event(self, *args, **kwargs):
+    def _ignore_event(self, *args: Any, **kwargs: Any) -> None:
         """
         Placeholder method to ignore events for unneeded buttons.
 
@@ -168,8 +170,7 @@ class UGVRemoteController(Controller):
         """
         pass
 
-        # Ignore all other buttons
-
+    # Ignore all other buttons
     on_x_press = _ignore_event
     on_x_release = _ignore_event
     on_triangle_press = _ignore_event
