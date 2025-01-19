@@ -1,7 +1,7 @@
 import os
 import pyfiglet
 import subprocess
-from typing import Any, Union
+from typing import Union
 import logging
 
 # General util functions

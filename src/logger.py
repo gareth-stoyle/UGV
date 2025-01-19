@@ -1,7 +1,6 @@
 import logging
 import random
 from termcolor import colored
-from typing import Type
 
 
 class customLogger:
