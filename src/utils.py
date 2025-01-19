@@ -6,6 +6,7 @@ import logging
 
 # General util functions
 
+
 def is_raspberry_pi5() -> bool:
     """Function for Detecting Raspberry Pi version.
 
@@ -18,12 +19,13 @@ def is_raspberry_pi5() -> bool:
                 return "Raspberry Pi 5" in line
     return False
 
+
 def normalise_to_range(
     value: Union[int, float],
     old_min: Union[int, float],
     old_max: Union[int, float],
     new_min: Union[int, float],
-    new_max: Union[int, float]
+    new_max: Union[int, float],
 ) -> float:
     """Normalise a value from one range to another.
 
@@ -47,6 +49,7 @@ def normalise_to_range(
 
     return new_min + ((value - old_min) * (new_max - new_min)) / (old_max - old_min)
 
+
 def run_tests() -> bool:
     """Run pytest tests.
 
@@ -58,6 +61,7 @@ def run_tests() -> bool:
     )
     return result.returncode == 0
 
+
 def delete_file(file_path: str) -> None:
     """Deletes the specified file if it exists.
 
@@ -66,6 +70,7 @@ def delete_file(file_path: str) -> None:
     """
     if os.path.exists(file_path):
         os.remove(file_path)
+
 
 def print_ugv_system_banner(logger: logging.Logger) -> None:
     """Prints a large 'UGV System' ASCII art banner.

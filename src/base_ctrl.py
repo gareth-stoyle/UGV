@@ -18,9 +18,9 @@ class BaseController:
         :param uart_dev_set: The UART device to connect to (e.g., '/dev/ttyUSB0').
         :param buad_set: The baud rate for the serial communication.
         """
-        self.ser: serial.Serial = serial.Serial(uart_dev_set, buad_set, timeout=1)
+        self.ser = serial.Serial(uart_dev_set, buad_set, timeout=1)
         self.command_queue: queue.Queue[Dict[str, Any]] = queue.Queue()
-        self.command_thread: threading.Thread = threading.Thread(
+        self.command_thread = threading.Thread(
             target=self.process_commands, daemon=True
         )
         self.command_thread.start()

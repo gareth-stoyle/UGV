@@ -1,4 +1,5 @@
 ugv-env/
+outputs/
 .vscode/
 __pycache__/
 tutorial_cn/__pycache__/

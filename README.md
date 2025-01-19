@@ -30,4 +30,4 @@ For setup instructions, see the instructions at https://github.com/waveshareteam
 ### Setup Notes
 
 * I followed the setup steps in the above link, and then used the created virtual environment to operate the code in this repository.
-* pyPS4Controller has a bug which affects performance (see here: https://github.com/ArturSpirin/pyPS4Controller/issues/28). I have left a comment there describing how to fix it, as the author doesn't seem to be responding to pull requests.
+* pyPS4Controller has a bug which affects performance (see here: https://github.com/ArturSpirin/pyPS4Controller/issues/28). Author doesn't seem to be responding to pull requests.

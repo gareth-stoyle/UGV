@@ -26,10 +26,10 @@ class UGVRemoteController(Controller):
         )
         self.config: Dict[str, Any] = config
         self.debug: bool = False  # debug event stream
-        self.black_listed_buttons: list[int] = [1, 4, 3]
 
+        self.recording: bool = False
         self._speed: float = 0.0
-        self._turn: int = 0
+        self._turn: int = 0.0
 
     @property
     def speed(self) -> float:
@@ -47,7 +47,7 @@ class UGVRemoteController(Controller):
         Getter for the turn attribute.
 
         Returns:
-            int: turning value (0: straight, -1: full left, 1: full right).
+            int: turning value (0.0: straight, -1.0: full left, 1.0: full right).
         """
         return self._turn
 
@@ -67,7 +67,7 @@ class UGVRemoteController(Controller):
         Setter for the turn attribute.
 
         Args:
-            val: New turn value (0: straight, -1: full left, 1: full right).
+            val: New turn value (0.0: straight, -1.0: full left, 1.0: full right).
         """
         self._turn = val
 
@@ -93,7 +93,7 @@ class UGVRemoteController(Controller):
 
         Sets the left motor speed to 0.
         """
-        self.speed = 0
+        self.speed = 0.0
 
     def on_L2_press(self, val: int) -> None:
         """
@@ -118,7 +118,7 @@ class UGVRemoteController(Controller):
 
         Sets the right motor speed to 0.
         """
-        self.speed = 0
+        self.speed = 0.0
 
     def on_L3_right(self, val: int) -> None:
         """
@@ -160,6 +160,14 @@ class UGVRemoteController(Controller):
         """
         self.stop = True
 
+    def on_square_release(self) -> None:
+        """
+        Event handler for releasing the square button.
+
+        Toggles recording.
+        """
+        self.recording = not self.recording
+
     def _ignore_event(self, *args: Any, **kwargs: Any) -> None:
         """
         Placeholder method to ignore events for unneeded buttons.
@@ -178,7 +186,6 @@ class UGVRemoteController(Controller):
     on_circle_press = _ignore_event
     on_circle_release = _ignore_event
     on_square_press = _ignore_event
-    on_square_release = _ignore_event
     on_L1_press = _ignore_event
     on_L1_release = _ignore_event
     on_R1_press = _ignore_event

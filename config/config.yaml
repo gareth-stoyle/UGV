@@ -1,3 +1,5 @@
+general_config:
+  VIDEO_PATH: "/home/gareth/ugv_rpi/outputs/videos"
 ps4_controller_config: 
   PS4_INTERFACE: "/dev/input/js0"
   R2_MAX: 32767

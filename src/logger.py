@@ -36,7 +36,9 @@ class customLogger:
         )
 
         # Pick a random color from the COLOURS list for console output
-        colour: str = random.choice(["red", "green", "yellow", "blue", "magenta", "cyan"])
+        colour: str = random.choice(
+            ["red", "green", "yellow", "blue", "magenta", "cyan"]
+        )
 
         # Create a custom formatter with color
         class ColouredFormatter(logging.Formatter):

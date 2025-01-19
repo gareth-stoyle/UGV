@@ -2,15 +2,22 @@ from threading import Thread
 import time
 from typing import Dict, Any, Tuple
 
-from src.controller import UGVRemoteController
 from src.base_ctrl import BaseController
+from src.camera import Camera
+from src.controller import UGVRemoteController
 from src.logger import customLogger
 
 
 class UGVSystem:
     """High Level Controller for the system (remote control + UGV)"""
 
-    def __init__(self, config: Dict[str, Any], base_path: str, debug_logging: bool) -> None:
+    def __init__(
+        self,
+        config: Dict[str, Any],
+        base_path: str,
+        debug_logging: bool,
+        camera: bool = False,
+    ) -> None:
         """
         Initialize the UGVSystem with configuration and base path.
 
@@ -18,13 +25,18 @@ class UGVSystem:
             config: Configuration dictionary for the remote controller.
             base_path: Path to the base device connection.
             debug_logging: Flag to enable or disable debug-level logging.
+            camera: Whether to initialise a camera.
         """
         self.config = config
         self.base_path = base_path
-        self.controller = UGVRemoteController(config=config)
+        self.is_recording: bool = False
         self.base = BaseController(base_path, 115200)
-        self.logger = customLogger("ugv_system", "log/app.log", debug_logging)
-        self.logger.debug("Initialised UGVRemoteController and BaseController")
+        self.controller = UGVRemoteController(config=config)
+        self.logger = customLogger("ugv_system", "outputs/log/app.log", debug_logging)
+        self.logger.debug("Initialised UGVRemoteController, BaseController")
+        if camera:
+            self.camera = Camera(resolution=(1920, 1080), flip=False)
+            self.logger.debug("Initialised Camera")
 
     def _drive(self, speed: float, turn: float, log: bool = False) -> None:
         """
@@ -76,6 +88,19 @@ class UGVSystem:
 
         return l_speed, r_speed
 
+    def _toggle_camera_recording(self):
+        """Toggles camera recording."""
+        video_name = f"video_{time.strftime('%Y-%m-%d_%H-%M-%S')}.mp4"
+        if self.is_recording:
+            self.camera.stop_recording()
+            self.logger.info("Stopped camera recording.")
+        else:
+            self.camera.start_recording(
+                self.config["general_config"]["VIDEO_PATH"], video_name
+            )
+            self.logger.info("Started camera recording.")
+        self.is_recording = not self.is_recording
+
     def _terminate(self) -> None:
         """Kill system by killing controller"""
         self.controller.stop = True
@@ -97,7 +122,11 @@ class UGVSystem:
             # Drive the UGV using current remote controller inputs
             self._drive(self.controller.speed, self.controller.turn, log=log)
 
+            if self.is_recording != self.controller.recording:
+                self._toggle_camera_recording()
+
             time.sleep(0.01)  # Sleep to reduce CPU usage
+
         if self.controller.stop:
             self.logger.info("Stop command received, exiting!")
             self._drive(0.0, 0.0, True)
@@ -109,7 +138,9 @@ class UGVSystem:
         Ensures the UGV stops when the remote control thread ends.
         """
         # Thread to handle remote control listening
-        remote_control_thread: Thread = Thread(target=self.controller.listen, args=(60,))
+        remote_control_thread: Thread = Thread(
+            target=self.controller.listen, args=(60,)
+        )
         # Thread to handle the system's main loop
         system_loop_thread: Thread = Thread(target=self._loop)
 
