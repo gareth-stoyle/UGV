@@ -10,11 +10,6 @@ from src.utils import is_raspberry_pi5, run_tests, delete_file, print_ugv_system
 os.environ["LIBCAMERA_LOG_LEVELS"] = "*:ERROR"
 
 
-def tidy_up():
-    logger.info("Tidy up PLACEHOLDER.")
-    logger.info("Tidy up complete.")
-
-
 ### Variables ###
 log_file = "outputs/log/app.log"
 # Determine the GPIO Serial Device Name Based on the Raspberry Pi Model
@@ -35,7 +30,6 @@ logger.info("Initiating testing...")
 
 if not run_tests():
     logger.critical("Tests failed! Exiting.")
-    tidy_up()
     sys.exit(1)
 
 logger.info("Testing passed, running UGV system!")
@@ -47,7 +41,3 @@ system = UGVSystem(
     config=config, base_path=base_path, debug_logging=args.debug, camera=True
 )
 system.run()
-
-
-### Tidy up ###
-tidy_up()

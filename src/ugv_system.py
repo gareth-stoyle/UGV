@@ -34,9 +34,24 @@ class UGVSystem:
         self.controller = UGVRemoteController(config=config)
         self.logger = customLogger("ugv_system", "outputs/log/app.log", debug_logging)
         self.logger.debug("Initialised UGVRemoteController, BaseController")
+        self.camera_exists: bool = False
         if camera:
+            self.camera_exists = True
             self.camera = Camera(resolution=(1920, 1080), flip=False)
             self.logger.debug("Initialised Camera")
+
+    def _tidy_up(self) -> None:
+        """
+        Method to tidy up after receiving exit command.
+        """
+        self._drive(0.0, 0.0, True)
+        self.controller.speed = 0.0
+        if self.camera_exists and self.is_recording:
+            self._toggle_camera_recording()
+            self.camera.camera_close()
+        elif self.camera_exists:
+            self.camera.camera_close()
+        self.logger.info("Tidy up complete.")
 
     def _drive(self, speed: float, turn: float, log: bool = False) -> None:
         """
@@ -122,15 +137,14 @@ class UGVSystem:
             # Drive the UGV using current remote controller inputs
             self._drive(self.controller.speed, self.controller.turn, log=log)
 
-            if self.is_recording != self.controller.recording:
+            if self.camera_exists and self.is_recording != self.controller.recording:
                 self._toggle_camera_recording()
 
             time.sleep(0.01)  # Sleep to reduce CPU usage
 
         if self.controller.stop:
             self.logger.info("Stop command received, exiting!")
-            self._drive(0.0, 0.0, True)
-            self.controller.speed = 0.0
+            self._tidy_up()
 
     def run(self) -> None:
         """
@@ -150,9 +164,8 @@ class UGVSystem:
         remote_control_thread.join()
 
         # Stop the UGV system if remote control ends abruptly (battery/connection)
-        self.logger.debug("Remote control thread ended, ensuring UGV stopped")
-        self._drive(0.0, 0.0, True)
-        self.controller.speed = 0.0
+        self.logger.debug("Remote control thread ended, exiting!")
+        self._terminate()
 
         system_loop_thread.join()
 

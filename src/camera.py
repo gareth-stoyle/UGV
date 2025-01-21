@@ -28,6 +28,12 @@ class Camera:
         if flip:
             self.camera.set_controls({"FlipHorizontal": True, "FlipVertical": True})
         self.camera.start()
+    
+    def camera_close(self) -> None:
+        """
+        Cleans up Camera object.
+        """
+        self.camera.stop()
 
     def start_recording(self, path: str, video_file: str) -> None:
         """
