@@ -2,22 +2,6 @@
 This is a personal project where I take a ready made Unmannged Ground Vehicle (UGV) and make it do cool things.
 
 ## Cool things
-### PS4 Remote Control
-I have build a system that takes inputs from a bluetooth PS4 controller, and controls the UGV, alloying for speed control, and effective turning using the analogue sticks.
-
-[insert gif here]
-
-### AI Animal Detection
-Under Construction.
-
-[insert gif here]
-
-### LiDAR Adaptive Cruise Control
-TBD
-
-[insert gif here]
-
-
 ### TBD
 
 ## Credits
